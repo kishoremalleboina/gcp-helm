@@ -26,6 +26,10 @@ jobs:
     - name: setup gcloud
       uses: google-github-actions/setup-gcloud@v2
 
+    - name: Install GKE auth plugin
+      run: |
+        gcloud components install gke-gcloud-auth-plugin --quiet
+
     - name: get gke credentails
       run: |
         gcloud container clusters get-credentials my-gke-cluster --region us-central1 --project dev-project-490411
