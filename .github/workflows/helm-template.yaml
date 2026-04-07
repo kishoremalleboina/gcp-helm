@@ -28,7 +28,7 @@ jobs:
 
     - name: get gke credentails
       run: |
-        gcloud container clusters get-credentials my-gke-cluster --region us-central1 --project Dev-Project
+        gcloud container clusters get-credentials my-gke-cluster --region us-central1 --project dev-project-490411
 
     - name: install helm
       uses: azure/setup-helm@v4
