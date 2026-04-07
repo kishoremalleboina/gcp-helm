@@ -34,6 +34,6 @@ jobs:
       uses: azure/setup-helm@v4
 
     - name: deploy helm
-      run: helm upgrade --install my-app . -f values.yml --namespace dev --create-namespace
+      run: helm upgrade --install my-app . -f values.yaml --namespace dev --create-namespace
 
         
