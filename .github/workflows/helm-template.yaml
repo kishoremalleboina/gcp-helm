@@ -38,6 +38,6 @@ jobs:
       uses: azure/setup-helm@v4
 
     - name: deploy helm
-      run: helm upgrade --install my-app . -f values.dev.yaml --namespace dev --create-namespace
+      run: helm upgrade --install my-app ./multiple-service-base-chart -f values.dev.yaml --namespace dev --create-namespace
 
         
