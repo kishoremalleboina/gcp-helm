@@ -26,14 +26,18 @@ jobs:
     - name: setup gcloud
       uses: google-github-actions/setup-gcloud@v2
 
+    - name: Install GKE auth plugin
+      run: |
+        gcloud components install gke-gcloud-auth-plugin --quiet
+
     - name: get gke credentails
       run: |
-        gcloud container clusters get-credentials my-gke-cluster --region us-central1 --project Dev-Project
+        gcloud container clusters get-credentials my-gke-cluster --region us-central1 --project dev-project-490411
 
     - name: install helm
       uses: azure/setup-helm@v4
 
     - name: deploy helm
-      run: helm upgrade --install my-app . -f values.dev.yaml --namespace dev --create-namespace
-      
+      run: helm upgrade --install my-app . -f values.yaml --namespace dev --create-namespace
+
         
