@@ -24,7 +24,7 @@ spec:
           ports:
             {{- range .ports }}
             - containerPort: {{ .containerPort }}
-              protocol: {{ .protocal | default "TCP" }}
+              protocol: {{ .protocol | default "TCP" }}
             {{- end }}
           resources:
             {{- toYaml .resources | nindent 12 }}
