@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: {{ .name }}
-          image: "image: "{{ .repository }}:{{ index . (printf "%s_image_tag" (replace "-" "_" .name)) | default "latest" }}"
+          image: "{{ .repository }}:{{ index . (printf "%s_image_tag" (replace "-" "_" .name)) | default "latest" }}"
           imagePullPolicy: {{ $.Values.pullPolicy }}
           ports:
             {{- range .ports }}
