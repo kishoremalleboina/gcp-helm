@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: {{ .name }}
-          image: "{{ .repository }}:{{ .tag }}"
+          image: "{{ .repository }}:{{ .tag | default "latest" }}"
           imagePullPolicy: {{ $.Values.pullPolicy }}
           ports:
             {{- range .ports }}
