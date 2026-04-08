@@ -21,6 +21,15 @@ jobs:
     - name: Extract short SHA
       run: echo "SHORT_SHA=$(echo ${{ github.event.workflow_run.head_sha }} | cut -c1-7)" >> $GITHUB_ENV
 
+    - name: Install yq
+      run: |
+        sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+        sudo chmod +x /usr/local/bin/yq
+
+    - name: Update values.yaml
+      run: |
+        yq -i '.apps[].tag = env(SHORT_SHA)' values.dev.yaml
+
     - name: Authenticate to GCP
       uses: google-github-actions/auth@v2
       with:
