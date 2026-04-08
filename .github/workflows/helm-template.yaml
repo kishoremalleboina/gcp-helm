@@ -4,6 +4,15 @@ on:
     workflows: ["Build and push the docker image"]
     types:
       - completed
+  workflow_dispatch:
+    inputs:
+    environment:
+      description: "Select environment"
+      required: true
+      type: choice
+      options:
+        - dev
+        - qa
 
 jobs:
   deploy:
@@ -13,6 +22,9 @@ jobs:
     permissions:
       contents: write
       id-token: write   # Required for OIDC
+
+    env:
+      ENV: ${{ github.event_name == 'workflow_run' && 'dev' || github.event.inputs.environment }}
 
     steps:
     - name: Checkout
@@ -26,16 +38,29 @@ jobs:
         sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
         sudo chmod +x /usr/local/bin/yq
 
-    - name: Update values.yaml
-      run: |
-        yq -i '.apps[].tag = env(SHORT_SHA)' values.dev.yaml
+    - name: Set SHORT_SHA (auto from CI)
+      if: ${{ github.event_name == 'workflow_run' }}
+      run: echo "SHORT_SHA=$(echo ${{ github.event.workflow_run.head_sha }} | cut -c1-7)" >> $GITHUB_ENV
 
-    - name: Commit and push changes
+    - name: Set SHORT_SHA (manual input or fallback)
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      run: |
+        if [ -n "${{ github.event.inputs.image_tag }}" ]; then
+          echo "SHORT_SHA=${{ github.event.inputs.image_tag }}" >> $GITHUB_ENV
+        else
+          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        fi
+
+    - name: Update values file
+      run: |
+        yq -i '.apps[].tag = env(SHORT_SHA)' values.${ENV}.yaml
+
+    - name: Commit and push
       run: |
         git config user.name "github-actions"
         git config user.email "actions@github.com"
-        git add values.dev.yaml
-        git commit -m "chore: update image tag to ${SHORT_SHA}" || echo "No changes"
+        git add values.${ENV}.yaml
+        git commit -m "chore(${ENV}): deploy ${SHORT_SHA}" || echo "No changes"
         git push
 
     - name: Authenticate to GCP
@@ -61,9 +86,9 @@ jobs:
     - name: deploy helm
       run: |
         helm upgrade --install my-app ./multiple-service-base-chart \
-          -f values.dev.yaml \
+          -f values.${ENV}.yaml \
           --set apps[0].tag=${SHORT_SHA},apps[1].tag=${SHORT_SHA} \
-          --namespace dev \
+          --namespace ${ENV} \
           --create-namespace
 
         
