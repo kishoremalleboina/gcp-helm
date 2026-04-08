@@ -2,7 +2,7 @@ env: ""
 
 namespace: ""
 
-pullPolicy: IfNotPresent
+pullPolicy: Always
 
 project-name: ""
 
