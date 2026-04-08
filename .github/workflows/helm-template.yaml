@@ -30,6 +30,14 @@ jobs:
       run: |
         yq -i '.apps[].tag = env(SHORT_SHA)' values.dev.yaml
 
+    - name: Commit and push changes
+      run: |
+        git config user.name "github-actions"
+        git config user.email "actions@github.com"
+        git add values.dev.yaml
+        git commit -m "chore: update image tag to ${SHORT_SHA}" || echo "No changes"
+        git push
+
     - name: Authenticate to GCP
       uses: google-github-actions/auth@v2
       with:
