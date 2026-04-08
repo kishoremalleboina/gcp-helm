@@ -3,6 +3,8 @@ name: Build and push the docker image
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'values.dev.yaml'
 
 jobs:
   build-test-push:
