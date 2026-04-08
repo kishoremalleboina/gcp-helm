@@ -4,7 +4,7 @@ namespace: ""
 
 pullPolicy: IfNotPresent
 
-resource_group: ""
+project-name: ""
 
 apps: []
 
