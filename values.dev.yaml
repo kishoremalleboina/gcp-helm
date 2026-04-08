@@ -1,13 +1,12 @@
 env: dev
 pullPolicy: IfNotPresent
 project-name: "Dev-Project"
-
 ingress:
   enabled: false
   className: "webapprouting.kubernetes.azure.com"
   annotations:
     kubernetes.io/ingress.class: "addon-http-application-routing"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod" 
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
   hosts:
     - host: dev.information-guide.com
       paths:
@@ -23,11 +22,10 @@ ingress:
     - secretName: ingress-cert-secret
       hosts:
         - dev.information-guide.com
-
 apps:
   - name: information-guide-web
     repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
-    tag: "087af10c9c4baa049af7d16f045b2a49188b2113"
+    tag: "4b228e3"
     hpa:
       enabled: false
       maxReplicas: 2
@@ -36,11 +34,11 @@ apps:
       resourceType: Utilization
       resourceValue: 70
     pvc: {}
-    resources: 
+    resources:
       requests:
         memory: "20Mi"
         cpu: "20m"
-      limits: 
+      limits:
         memory: "50Mi"
         cpu: "50m"
     startupProbe:
@@ -71,19 +69,19 @@ apps:
       timeoutSeconds: 3
       successThreshold: 1
       failureThreshold: 3
-    ports: 
+    ports:
       - containerPort: 3000
-        protocol: TCP 
+        protocol: TCP
     secrets:
       enabled: false
       secrets: # Renamed from 'secrets' to avoid confusion
         db: ""
     #variables: 
-     # Backend_service: "http://information-guide-service:3000"
-
   - name: information-guide-service
+    # Backend_service: "http://information-guide-service:3000"
+
     repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
-    tag: "087af10c9c4baa049af7d16f045b2a49188b2113"
+    tag: "4b228e3"
     hpa:
       enabled: false
       maxReplicas: 2
@@ -92,14 +90,14 @@ apps:
       resourceType: Utilization
       resourceValue: 70
     pvc: {}
-    resources: 
+    resources:
       requests:
         memory: "20Mi"
         cpu: "20m"
-      limits: 
+      limits:
         memory: "50Mi"
         cpu: "50m"
-    ports: 
+    ports:
       - containerPort: 3000
         protocol: TCP
     secrets:
@@ -107,9 +105,7 @@ apps:
       secrets:
         db: ""
     variables: {} # Ensure this is an empty map, not null
-
 #########################################################################################
-
 services:
   - service_name: information-guide-web
     type: ClusterIP
@@ -119,7 +115,6 @@ services:
         name: http
         port: 3000
         targetPort: 3000
-
   - service_name: information-guide-service
     type: ClusterIP
     annotations: {}
@@ -127,6 +122,4 @@ services:
       - protocol: TCP
         name: http
         port: 3000
-
         targetPort: 3000
-
