@@ -6,13 +6,13 @@ on:
       - completed
   workflow_dispatch:
     inputs:
-    environment:
-      description: "Select environment"
-      required: true
-      type: choice
-      options:
-        - dev
-        - qa
+      environment:
+        description: "Select environment"
+        required: true
+        type: choice
+        options:
+          - dev
+          - qa
 
 jobs:
   deploy:
