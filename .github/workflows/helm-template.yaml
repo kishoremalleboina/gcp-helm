@@ -1,11 +1,13 @@
-name: CI Pipeline
-
+name: Depploy to GKE using Helm
 on:
-  push:
-    branches: [ "main" ]
+  workflow_run:
+    workflows: ["Build and push the docker image"]
+    types:
+      - completed
 
 jobs:
-  build-test-push:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     permissions:
@@ -16,7 +18,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    # 🔹 Authenticate to GCP using OIDC
+    - name: Extract short SHA
+      run: echo "SHORT_SHA=$(echo ${{ github.event.workflow_run.head_sha }} | cut -c1-7)" >> $GITHUB_ENV
+
     - name: Authenticate to GCP
       uses: google-github-actions/auth@v2
       with:
@@ -38,6 +42,11 @@ jobs:
       uses: azure/setup-helm@v4
 
     - name: deploy helm
-      run: helm upgrade --install my-app ./multiple-service-base-chart -f values.dev.yaml --namespace dev --create-namespace
+      run: |
+        helm upgrade --install my-app ./multiple-service-base-chart \
+          -f values.dev.yaml \
+          --set apps[0].tag=${SHORT_SHA},apps[1].tag=${SHORT_SHA} \
+          --namespace dev \
+          --create-namespace
 
         
