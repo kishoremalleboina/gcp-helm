@@ -26,8 +26,8 @@ ingress:
 
 apps:
   - name: information-guide-web
-    repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/myapp"
-    tag: v2
+    repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
+    tag: "9ae1a9226cf43c113706ce947152caf487fc43c0"
     hpa:
       enabled: false
       maxReplicas: 2
@@ -82,8 +82,8 @@ apps:
      # Backend_service: "http://information-guide-service:3000"
 
   - name: information-guide-service
-    repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/myapp"
-    tag: v2
+    repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
+    tag: "9ae1a9226cf43c113706ce947152caf487fc43c0"
     hpa:
       enabled: false
       maxReplicas: 2
