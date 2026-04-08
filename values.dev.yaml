@@ -25,7 +25,7 @@ ingress:
 apps:
   - name: information-guide-web
     repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
-    tag: "4b228e3"
+    tag: "b1d7b8f"
     hpa:
       enabled: false
       maxReplicas: 2
@@ -76,12 +76,12 @@ apps:
       enabled: false
       secrets: # Renamed from 'secrets' to avoid confusion
         db: ""
-    #variables: 
+        #variables: 
   - name: information-guide-service
     # Backend_service: "http://information-guide-service:3000"
 
     repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
-    tag: "4b228e3"
+    tag: "b1d7b8f"
     hpa:
       enabled: false
       maxReplicas: 2
