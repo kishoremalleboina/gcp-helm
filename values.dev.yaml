@@ -38,11 +38,11 @@ apps:
     pvc: {}
     resources: 
       requests:
+        memory: "20Mi"
+        cpu: "20m"
+      limits: 
         memory: "50Mi"
         cpu: "50m"
-      limits: 
-        memory: "100Mi"
-        cpu: "100m"
     startupProbe:
       httpGet:
         path: /
@@ -94,11 +94,11 @@ apps:
     pvc: {}
     resources: 
       requests:
+        memory: "20Mi"
+        cpu: "20m"
+      limits: 
         memory: "50Mi"
         cpu: "50m"
-      limits: 
-        memory: "100Mi"
-        cpu: "100m"
     ports: 
       - containerPort: 80
         protocol: TCP
