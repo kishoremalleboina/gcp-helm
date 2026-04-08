@@ -21,7 +21,7 @@ jobs:
       uses: google-github-actions/auth@v2
       with:
         workload_identity_provider: projects/946678058338/locations/global/workloadIdentityPools/github-pool/providers/github-provider
-        service_account: github-sa@dev-project-490411.iam.gserviceaccount.com
+        service_account: CICD-pipeline@dev-project-490411.iam.gserviceaccount.com
 
     - name: setup gcloud
       uses: google-github-actions/setup-gcloud@v2
@@ -35,5 +35,5 @@ jobs:
 
     - name: deploy helm
       run: helm upgrade --install my-app . -f values.dev.yaml --namespace dev --create-namespace
-
+      
         

@@ -1,6 +1,6 @@
 env: dev
 pullPolicy: IfNotPresent
-resource-group: "dev-rg"
+project-name: "Dev-Project"
 
 ingress:
   enabled: false
@@ -26,7 +26,7 @@ ingress:
 
 apps:
   - name: information-guide-web
-    repository: "sampleapp4732-cbcuenb9gngggbgg.azurecr.io/sveltkitsveltstrap" 
+    repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test" 
     information_guide_web_image_tag: "26"
     hpa:
       enabled: false
@@ -46,7 +46,7 @@ apps:
     startupProbe:
       httpGet:
         path: /
-        port: 5000
+        port: 80
         scheme: HTTP
       initialDelaySeconds: 45
       periodSeconds: 10
@@ -55,7 +55,7 @@ apps:
     livenessProbe:
       httpGet:
         path: /
-        port: 3000
+        port: 80
         scheme: HTTP
       initialDelaySeconds: 45
       periodSeconds: 10
@@ -64,7 +64,7 @@ apps:
     readinessProbe:
       httpGet:
         path: /
-        port: 5000
+        port: 80
         scheme: HTTP
       initialDelaySeconds: 45
       periodSeconds: 10
@@ -72,17 +72,17 @@ apps:
       successThreshold: 1
       failureThreshold: 3
     ports: 
-      - containerPort: 5000
+      - containerPort: 80
         protocol: TCP 
     secrets:
       enabled: false
       secrets: # Renamed from 'secrets' to avoid confusion
         db: ""
-    variables: 
-      Backend_service: "http://information-guide-service:3000"
+    #variables: 
+     # Backend_service: "http://information-guide-service:3000"
 
   - name: information-guide-service
-    repository: "myacr.azurecr.io/ig-service"
+    repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
     information_guide_service_image_tag: "v1.0.0"
     hpa:
       enabled: false
@@ -100,7 +100,7 @@ apps:
         memory: "512Mi"
         cpu: "500m"
     ports: 
-      - containerPort: 3000
+      - containerPort: 80
         protocol: TCP
     secrets:
       enabled: false
@@ -117,8 +117,8 @@ services:
     ports:
       - protocol: TCP
         name: http
-        port: 5000
-        targetPort: 5000
+        port: 80
+        targetPort: 80
 
   - service_name: information-guide-service
     type: ClusterIP
@@ -126,7 +126,7 @@ services:
     ports:
       - protocol: TCP
         name: http
-        port: 3000
+        port: 80
 
-        targetPort: 3000
+        targetPort: 80
 
