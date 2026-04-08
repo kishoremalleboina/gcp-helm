@@ -1,0 +1,44 @@
+{{- range .Values.apps }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+  labels:
+    app: {{ .name }}
+    env: {{ $.Values.env }}
+spec:
+  replicas: {{ .hpa.minReplicas | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+    spec:
+      containers:
+        - name: {{ .name }}
+          image: "{{ .repository }}:{{ index . (printf "%s_image_tag" (replace "-" "_" .name)) }}"
+          imagePullPolicy: {{ $.Values.pullPolicy }}
+          ports:
+            {{- range .ports }}
+            - containerPort: {{ .containerPort }}
+              protocol: {{ .protocal | default "TCP" }}
+            {{- end }}
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+          {{- if .variables }}
+          env:
+            {{- range $key, $val := .variables }}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+            {{- end }}
+          {{- end }}
+          {{- if .secrets.enabled }}
+          envFrom:
+            - secretRef:
+                name: {{ .name }}-secret
+          {{- end }}
+---
+{{- end }}

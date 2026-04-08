@@ -1,0 +1,16 @@
+{{- range .Values.apps }}
+{{- if .variables }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .name }}-config
+  labels:
+    app: {{ .name }}
+    env: {{ $.Values.env | default "dev" }}
+data:
+  {{- range $key, $val := .variables }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}
+{{- end }}
+{{- end }}

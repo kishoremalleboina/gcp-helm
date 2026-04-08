@@ -1,0 +1,22 @@
+env: ""
+
+namespace: ""
+
+pullPolicy: IfNotPresent
+
+resource_group: ""
+
+apps: []
+
+services: []
+
+hpas: []
+
+securityContext: {}
+
+containerSecurityContext: {}
+
+tolerations: []
+
+affinity: []
+

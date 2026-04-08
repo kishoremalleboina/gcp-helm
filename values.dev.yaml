@@ -1,0 +1,132 @@
+env: dev
+pullPolicy: IfNotPresent
+resource-group: "dev-rg"
+
+ingress:
+  enabled: false
+  className: "webapprouting.kubernetes.azure.com"
+  annotations:
+    kubernetes.io/ingress.class: "addon-http-application-routing"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" 
+  hosts:
+    - host: dev.information-guide.com
+      paths:
+        - path: /
+          pathType: Prefix
+          backend_service: information-guide-web
+          port: 3000
+        - path: /api
+          pathType: Prefix
+          backend_service: information-guide-service
+          port: 3000
+  tls:
+    - secretName: ingress-cert-secret
+      hosts:
+        - dev.information-guide.com
+
+apps:
+  - name: information-guide-web
+    repository: "sampleapp4732-cbcuenb9gngggbgg.azurecr.io/sveltkitsveltstrap" 
+    information_guide_web_image_tag: "26"
+    hpa:
+      enabled: false
+      maxReplicas: 2
+      minReplicas: 1
+      resourceName: cpu
+      resourceType: Utilization
+      resourceValue: 70
+    pvc: {}
+    resources: 
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits: 
+        memory: "512Mi"
+        cpu: "500m"
+    startupProbe:
+      httpGet:
+        path: /
+        port: 5000
+        scheme: HTTP
+      initialDelaySeconds: 45
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 3000
+        scheme: HTTP
+      initialDelaySeconds: 45
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 5000
+        scheme: HTTP
+      initialDelaySeconds: 45
+      periodSeconds: 10
+      timeoutSeconds: 3
+      successThreshold: 1
+      failureThreshold: 3
+    ports: 
+      - containerPort: 5000
+        protocol: TCP 
+    secrets:
+      enabled: false
+      secrets: # Renamed from 'secrets' to avoid confusion
+        db: ""
+    variables: 
+      Backend_service: "http://information-guide-service:3000"
+
+  - name: information-guide-service
+    repository: "myacr.azurecr.io/ig-service"
+    information_guide_service_image_tag: "v1.0.0"
+    hpa:
+      enabled: false
+      maxReplicas: 2
+      minReplicas: 1
+      resourceName: cpu
+      resourceType: Utilization
+      resourceValue: 70
+    pvc: {}
+    resources: 
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits: 
+        memory: "512Mi"
+        cpu: "500m"
+    ports: 
+      - containerPort: 3000
+        protocol: TCP
+    secrets:
+      enabled: false
+      secrets:
+        db: ""
+    variables: {} # Ensure this is an empty map, not null
+
+#########################################################################################
+
+services:
+  - service_name: information-guide-web
+    type: ClusterIP
+    annotations: {}
+    ports:
+      - protocol: TCP
+        name: http
+        port: 5000
+        targetPort: 5000
+
+  - service_name: information-guide-service
+    type: ClusterIP
+    annotations: {}
+    ports:
+      - protocol: TCP
+        name: http
+        port: 3000
+
+        targetPort: 3000
+

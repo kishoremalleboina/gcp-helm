@@ -1,0 +1,117 @@
+env: qa
+pullPolicy: IfNotPresent
+resource-group: "qa-rg"
+apps:
+  - name: information-guide-web
+    repository: "myacr.azurecr.io/ig-web" 
+    information_guide_web_image_tag: "v1.0.0"
+    hpa:
+      enabled: false
+      maxReplicas: 2
+      minReplicas: 1
+      resourceName: cpu
+      resourceType: Utilization
+      resourceValue: 70
+    pvc: {}
+    resources: 
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits: 
+        memory: "512Mi"
+        cpu: "500m"
+    ports: 
+      - containerPort: 300
+        protocol: TCP 
+    secrets:
+      enabled: false
+      data: # Renamed from 'secrets' to avoid confusion
+        db: "server"
+    variables: 
+      Backend_service: "http://information-guide-service:3000"
+
+  - name: information-guide-service
+    repository: "myacr.azurecr.io/ig-service"
+    information_guide_service_image_tag: "v1.0.0"
+    hpa:
+      enabled: false
+      maxReplicas: 2
+      minReplicas: 1
+      resourceName: cpu
+      resourceType: Utilization
+      resourceValue: 70
+    pvc: {}
+    resources: 
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits: 
+        memory: "512Mi"
+        cpu: "500m"
+    ports: 
+      - containerPort: 3000
+        protocol: TCP
+    secrets:
+      enabled: false
+      data:
+        db: "server"
+    variables: {} # Ensure this is an empty map, not null
+
+#########################################################################################
+
+services:
+  - service_name: information-guide-web
+    type: ClusterIP
+    annotations: {}
+    ports:
+      - protocol: TCP
+        name: http
+        port: 3000
+        targetPort: 3000
+    gw_http_route:
+      enabled: true
+      gateway_name: name of the gateway
+      certificate_map_name: cert-map-name
+      port: 3000
+      hosts: 
+      - domainName: "example.com"
+      matchRules: 
+        - path: /
+          backend: 
+          name: dev-information-guide-web
+          port: 3000
+        - path: /account
+          backend: dev-account-maangemnt-web
+          port: 3000
+      backend_policy:
+        enabled: true
+        securityPolicy:
+          policyName: "WAF"
+        iap: 
+          enabled: false
+          secret_name: self managed secret
+          clientid: 
+        logging:
+          enabled: false
+      healtchCheckpolicy:
+        enabled: true
+        checkIntervalSec: 3
+        timeoutSec: 2
+        healthyThreshold: 1
+        unhealthyThreshold: 3
+        requestPath: /health
+      selfManaged: 
+        enabled: truedomainName: dev.raj.com
+        secretName: cert-selfManaged-secret
+        keyName: raj_key
+        pem: | -
+          <cert>
+
+  - service_name: information-guide-service
+    type: ClusterIP
+    annotations: {}
+    ports:
+      - protocol: TCP
+        name: http
+        port: 3000
+        targetPort: 3000

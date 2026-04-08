@@ -2,16 +2,16 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "my-chart.fullname" . }}
+  name: {{ .Release.Name }}-ingress
   labels:
-    {{- include "my-chart.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+    env: {{ .Values.env | quote }}
   annotations:
+    {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- end }}
 spec:
-  {{- with .Values.ingress.className }}
-  ingressClassName: {{ . }}
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
   {{- if .Values.ingress.tls }}
   tls:
@@ -30,14 +30,12 @@ spec:
         paths:
           {{- range .paths }}
           - path: {{ .path }}
-            {{- with .pathType }}
-            pathType: {{ . }}
-            {{- end }}
+            pathType: {{ .pathType | default "Prefix" }}
             backend:
               service:
-                name: {{ include "my-chart.fullname" $ }}
+                name: {{ .backend_service }}
                 port:
-                  number: {{ $.Values.service.port }}
+                  number: {{ .port }}
           {{- end }}
     {{- end }}
 {{- end }}
