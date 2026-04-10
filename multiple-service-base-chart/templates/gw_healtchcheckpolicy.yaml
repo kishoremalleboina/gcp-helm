@@ -13,7 +13,7 @@ spec:
   targetRef:
     group: ""
     kind: Service
-    name: {{ .Values.service_name }}
+    name: {{ .service_name }}
   default:
     checkIntervalSec: {{ $hc.checkIntervalSec }}
     timeoutSec: {{ $hc.timeoutSec }}
