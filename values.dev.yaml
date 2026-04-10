@@ -1,11 +1,10 @@
 env: dev
 pullPolicy: IfNotPresent
 project-name: "Dev-Project"
-
 apps:
   - name: information-guide-web
     repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
-    tag: "17033fe"
+    tag: "ec832f5"
     hpa:
       enabled: false
       maxReplicas: 2
@@ -61,7 +60,7 @@ apps:
     # Backend_service: "http://information-guide-service:3000"
 
     repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
-    tag: "17033fe"
+    tag: "ec832f5"
     hpa:
       enabled: false
       maxReplicas: 2
@@ -107,10 +106,10 @@ services:
     type: ClusterIP
     annotations: {}
     ports:
-    - protocol: TCP
-      name: http
-      port: 3000
-      targetPort: 3000
+      - protocol: TCP
+        name: http
+        port: 3000
+        targetPort: 3000
     gw_http_route:
       enabled: true
       gateway_name: sample-gateway
@@ -144,5 +143,5 @@ services:
         enabled: false
         domainName: dev.sample.com
         secretName: sample-selfmanaged-secret
-        keyName:  sample_key
-        pem: |-
+        keyName: sample_key
+        pem: ""
