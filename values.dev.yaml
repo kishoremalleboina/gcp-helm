@@ -4,7 +4,7 @@ project-name: "Dev-Project"
 apps:
   - name: information-guide-web
     repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
-    tag: "d8c1d6e"
+    tag: "078a264"
     hpa:
       enabled: false
       maxReplicas: 2
@@ -60,7 +60,7 @@ apps:
     # Backend_service: "http://information-guide-service:3000"
 
     repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
-    tag: "d8c1d6e"
+    tag: "078a264"
     hpa:
       enabled: false
       maxReplicas: 2
