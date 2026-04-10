@@ -1,0 +1,15 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ .Values.service.gw_http_route.gateway_name }}
+spec:
+  gatewayClassName: gke-l7-global-external-managed
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: {{ (index .Values.service.gw_http_route.hosts 0).domainName }}
+      tls:
+        mode: Terminate
+        options:
+          networking.gke.io/certmap: {{ .Values.service.gw_http_route.certificate_map_name }}

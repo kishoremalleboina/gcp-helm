@@ -1,16 +1,25 @@
-{{- if .Values.gw_http_route.backend_policy.enabled }}
-apiVersion: networking.gke.io/v1
-kind: BackendPolicy
+{{- if .Values.service.gw_http_route.backend_policy.enabled }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
 metadata:
-  name: {{ .Values.service_name }}-backend-policy
+  name: {{ .Values.service.name }}-bc
 spec:
-  default:
-    securityPolicy: {{ .Values.gw_http_route.backend_policy.securityPolicy.policyName }}
-    logging:
-      enabled: {{ .Values.gw_http_route.backend_policy.logging.enabled }}
-    iap:
-      enabled: {{ .Values.gw_http_route.backend_policy.iap.enabled }}
-      oauthclientCredentials:
-        secretName: {{ .Values.gw_http_route.backend_policy.iap.secret_name }}
-      clientID: {{ .Values.gw_http_route.backend_policy.iap.client_id | quote }}
+  healthCheck:
+    checkIntervalSec: {{ .Values.service.gw_http_route.healthCheckPolicy.checkIntervalSec }}
+    timeoutSec: {{ .Values.service.gw_http_route.healthCheckPolicy.timeoutSec }}
+    healthyThreshold: {{ .Values.service.gw_http_route.healthCheckPolicy.healthyThreshold }}
+    unhealthyThreshold: {{ .Values.service.gw_http_route.healthCheckPolicy.unhealthyThreshold }}
+    type: HTTP
+    requestPath: {{ .Values.service.gw_http_route.healthCheckPolicy.requestPath }}
+
+  securityPolicy:
+    name: {{ .Values.service.gw_http_route.backend_policy.securityPolicy.policyName }}
+
+  logging:
+    enable: {{ .Values.service.gw_http_route.backend_policy.logging.enabled }}
+
+  iap:
+    enabled: {{ .Values.service.gw_http_route.backend_policy.iap.enabled }}
+    oauthclientCredentials:
+      secretName: {{ .Values.service.gw_http_route.backend_policy.iap.secret_name }}
 {{- end }}
