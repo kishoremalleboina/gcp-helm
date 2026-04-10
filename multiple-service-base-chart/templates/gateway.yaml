@@ -1,18 +1,11 @@
-{{- $service0 := index .Values.services 0 | default dict -}}
-{{- $gw := $service0.gw_http_route | default dict -}}
-{{- $hosts := $gw.hosts | default list -}}
+{{- $gw := .Values.gateway | default dict -}}
 
-{{- $host := "" -}}
-{{- if gt (len $hosts) 0 -}}
-  {{- $host = (index $hosts 0).domainName | default "" -}}
-{{- end -}}
-
-{{- if and $gw.enabled $host }}
+{{- if $gw.enabled }}
 
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: {{ $gw.gateway_name | default "default-gateway" }}
+  name: {{ $gw.name }}
 
 spec:
   gatewayClassName: gke-l7-global-external-managed
@@ -22,7 +15,9 @@ spec:
       protocol: HTTPS
       port: 443
 
-      hostname: {{ $host }}
+      {{- if $gw.host }}
+      hostname: {{ $gw.host }}
+      {{- end }}
 
       tls:
         mode: Terminate
