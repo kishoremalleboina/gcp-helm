@@ -20,9 +20,13 @@ spec:
       protocol: HTTPS
       port: 443
 
+      {{- if $host }}
       hostname: {{ $host }}
+      {{- end }}
 
       tls:
         mode: Terminate
         options:
-          networking.gke.io/certmap: {{ $gw.certificate_map_name | default "" }}
+          {{- if $gw.certificate_map_name }}
+          networking.gke.io/certmap: {{ $gw.certificate_map_name }}
+          {{- end }}
