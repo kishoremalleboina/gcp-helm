@@ -16,7 +16,9 @@ on:
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     permissions:
@@ -24,7 +26,7 @@ jobs:
       id-token: write   # Required for OIDC
 
     env:
-      ENV: ${{ github.event_name == 'workflow_run' && 'dev' || github.event.inputs.environment }}
+      ENV: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'dev' }}
 
     steps:
     - name: Checkout
