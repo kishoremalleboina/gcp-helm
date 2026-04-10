@@ -10,6 +10,10 @@ metadata:
   name: {{ .service_name }}-hc
 
 spec:
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ .Values.service_name }}
   default:
     checkIntervalSec: {{ $hc.checkIntervalSec }}
     timeoutSec: {{ $hc.timeoutSec }}
