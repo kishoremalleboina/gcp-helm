@@ -1,16 +1,24 @@
-{{- if .Values.gw_http_route.healthCheckPolicy.enabled }}
+{{- range .Values.services }}
+{{- $gw := .gw_http_route | default dict }}
+{{- $hc := $gw.healthCheckPolicy | default dict }}
+
+{{- if $hc.enabled }}
+---
 apiVersion: networking.gke.io/v1
 kind: HealthCheckPolicy
 metadata:
-  name: {{ .Values.service_name }}-hc
+  name: {{ .service_name }}-hc
+
 spec:
   default:
-    checkIntervalSec: {{ .Values.gw_http_route.healthCheckPolicy.checkIntervalSec }}
-    timeoutSec: {{ .Values.gw_http_route.healthCheckPolicy.timeoutSec }}
-    healthyThreshold: {{ .Values.gw_http_route.healthCheckPolicy.healthyThreshold }}
-    unhealthyThreshold: {{ .Values.gw_http_route.healthCheckPolicy.unhealthyThreshold }}
+    checkIntervalSec: {{ $hc.checkIntervalSec }}
+    timeoutSec: {{ $hc.timeoutSec }}
+    healthyThreshold: {{ $hc.healthyThreshold }}
+    unhealthyThreshold: {{ $hc.unhealthyThreshold }}
+
     config:
       type: HTTP
       httpHealthCheck:
-        requestPath: {{ .Values.gw_http_route.healthCheckPolicy.requestPath }}
+        requestPath: {{ $hc.requestPath }}
+{{- end }}
 {{- end }}
