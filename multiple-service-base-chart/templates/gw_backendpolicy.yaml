@@ -1,33 +1,24 @@
 {{- range .Values.services }}
-{{- $gw := .gw_http_route | default dict }}
-{{- $bp := $gw.backend_policy | default dict }}
-{{- $hc := $gw.healthCheckPolicy | default dict }}
 
-{{- if $bp.enabled }}
----
+{{- if .gw_http_route.backend_policy.enabled }}
+
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
   name: {{ .service_name }}-bc
 
 spec:
-  healthCheck:
-    checkIntervalSec: {{ $hc.checkIntervalSec }}
-    timeoutSec: {{ $hc.timeoutSec }}
-    healthyThreshold: {{ $hc.healthyThreshold }}
-    unhealthyThreshold: {{ $hc.unhealthyThreshold }}
-    type: HTTP
-    requestPath: {{ $hc.requestPath }}
-
   securityPolicy:
-    name: {{ $bp.securityPolicy.policyName }}
-
-  logging:
-    enable: {{ $bp.logging.enabled }}
+    name: {{ .gw_http_route.backend_policy.securityPolicy.policyName }}
 
   iap:
-    enabled: {{ $bp.iap.enabled }}
+    enabled: {{ .gw_http_route.backend_policy.iap.enabled }}
     oauthclientCredentials:
-      secretName: {{ $bp.iap.secret_name }}
+      secretName: {{ .gw_http_route.backend_policy.iap.secret_name }}
+
+  logging:
+    enable: {{ .gw_http_route.backend_policy.logging.enabled }}
+
 {{- end }}
+
 {{- end }}

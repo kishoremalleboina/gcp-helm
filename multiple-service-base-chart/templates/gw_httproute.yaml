@@ -1,8 +1,7 @@
 {{- range .Values.services }}
-{{- $gw := .gw_http_route | default dict }}
 
-{{- if $gw.enabled }}
----
+{{- if .gw_http_route.enabled }}
+
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -10,22 +9,24 @@ metadata:
 
 spec:
   parentRefs:
-    - name: {{ $gw.gateway_name }}
+    - name: {{ $.Values.gateway.name }}
+      kind: Gateway
 
   hostnames:
-    {{- range ($gw.hosts | default list) }}
-    - {{ .domainName }}
-    {{- end }}
+    - {{ $.Values.gateway.host }}
 
   rules:
-    {{- range ($gw.matchRules | default list) }}
+    {{- range .gw_http_route.matchRules }}
     - matches:
         - path:
             type: PathPrefix
             value: {{ .path }}
+
       backendRefs:
         - name: {{ .backend.name }}
           port: {{ .backend.port }}
     {{- end }}
+
 {{- end }}
+
 {{- end }}
