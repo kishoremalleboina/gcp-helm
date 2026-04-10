@@ -1,0 +1,16 @@
+{{- if .Values.gw_http_route.backend_policy.enabled }}
+apiVersion: networking.gke.io/v1
+kind: BackendPolicy
+metadata:
+  name: {{ .Values.service_name }}-backend-policy
+spec:
+  default:
+    securityPolicy: {{ .Values.gw_http_route.backend_policy.securityPolicy.policyName }}
+    logging:
+      enabled: {{ .Values.gw_http_route.backend_policy.logging.enabled }}
+    iap:
+      enabled: {{ .Values.gw_http_route.backend_policy.iap.enabled }}
+      oauthclientCredentials:
+        secretName: {{ .Values.gw_http_route.backend_policy.iap.secret_name }}
+      clientID: {{ .Values.gw_http_route.backend_policy.iap.client_id | quote }}
+{{- end }}

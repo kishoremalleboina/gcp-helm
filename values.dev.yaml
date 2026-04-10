@@ -1,27 +1,7 @@
 env: dev
 pullPolicy: IfNotPresent
 project-name: "Dev-Project"
-ingress:
-  enabled: false
-  className: "webapprouting.kubernetes.azure.com"
-  annotations:
-    kubernetes.io/ingress.class: "addon-http-application-routing"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-  hosts:
-    - host: dev.information-guide.com
-      paths:
-        - path: /
-          pathType: Prefix
-          backend_service: information-guide-web
-          port: 3000
-        - path: /api
-          pathType: Prefix
-          backend_service: information-guide-service
-          port: 3000
-  tls:
-    - secretName: ingress-cert-secret
-      hosts:
-        - dev.information-guide.com
+
 apps:
   - name: information-guide-web
     repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
@@ -107,14 +87,14 @@ apps:
     variables: {} # Ensure this is an empty map, not null
 #########################################################################################
 services:
-  - service_name: information-guide-web
-    type: ClusterIP
-    annotations: {}
-    ports:
-      - protocol: TCP
-        name: http
-        port: 3000
-        targetPort: 3000
+  # - service_name: information-guide-web
+  #   type: ClusterIP
+  #   annotations: {}
+  #   ports:
+  #     - protocol: TCP
+  #       name: http
+  #       port: 3000
+  #       targetPort: 3000
   - service_name: information-guide-service
     type: ClusterIP
     annotations: {}
@@ -123,3 +103,46 @@ services:
         name: http
         port: 3000
         targetPort: 3000
+  - service_name: information-guide-web
+    type: ClusterIP
+    annotations: {}
+    ports:
+    - protocol: TCP
+      name: http
+      port: 3000
+      targetPort: 3000
+    gw_http_route:
+      enabled: true
+      gateway_name: sample-gateway
+      certificate_map_name: sample-gateway-api-cert-map
+      port: 3000
+      hosts:
+        - domainName: "dev.sample.com"
+      matchRules:
+        - path: /
+          backend:
+            name: information-guide-web
+            port: 3000
+      backend_policy:
+        enabled: true
+        securityPolicy:
+          policyName: sample-cloudflare-waf
+        iap:
+          enabled: true
+          secret_name: sample-secret-iap
+          client_id: 946678058338-mep26vp89n99va6fol1ovhccvr6ep8e4.apps.googleusercontent.com
+        logging:
+          enabled: true
+      healthCheckPolicy:
+        enabled: true
+        checkIntervalSec: 3
+        timeoutSec: 2
+        healthyThreshold: 1
+        unhealthyThreshold: 3
+        requestPath: /
+      selfManaged:
+        enabled: false
+        domainName: dev.sample.com
+        secretName: sample-selfmanaged-secret
+        keyName:  sample_key
+        pem: |-
