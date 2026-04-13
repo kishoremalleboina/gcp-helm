@@ -9,7 +9,7 @@ gateway:
 apps:
   - name: information-guide-web
     repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
-    tag: "b4713aa"
+    tag: "134d967"
     hpa:
       enabled: false
       maxReplicas: 2
@@ -65,7 +65,7 @@ apps:
     # Backend_service: "http://information-guide-service:3000"
 
     repository: "us-central1-docker.pkg.dev/dev-project-490411/myartifactregistry/gcp-test"
-    tag: "b4713aa"
+    tag: "134d967"
     hpa:
       enabled: false
       maxReplicas: 2
