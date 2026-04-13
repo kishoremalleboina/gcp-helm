@@ -1,6 +1,6 @@
 {{- range .Values.services }}
 
-{{- if (default false .gw_http_route.enabled) }}
+{{- if and .gw_http_route (default false .gw_http_route.enabled) }}
 
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
