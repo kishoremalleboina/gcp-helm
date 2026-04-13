@@ -6,6 +6,10 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: {{ $gw.name }}
+  {{- if $gw.certificate_map_name }}
+  annotations:
+    networking.gke.io/certmap: {{ $gw.certificate_map_name }}
+  {{- end }}
 
 spec:
   gatewayClassName: gke-l7-global-external-managed
@@ -21,9 +25,5 @@ spec:
 
       tls:
         mode: Terminate
-        options:
-          {{- if $gw.certificate_map_name }}
-          networking.gke.io/certmap: {{ $gw.certificate_map_name }}
-          {{- end }}
 
 {{- end }}
