@@ -1,6 +1,6 @@
 {{- range .Values.services }}
 
-{{- if .gw_http_route.backend_policy.enabled }}
+{{- if and .gw_http_route .gw_http_route.backend_policy (default false .gw_http_route.backend_policy.enabled) }}
 
 apiVersion: cloud.google.com/v1
 kind: BackendConfig

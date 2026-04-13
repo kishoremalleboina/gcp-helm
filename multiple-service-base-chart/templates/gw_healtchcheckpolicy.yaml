@@ -1,6 +1,6 @@
 {{- range .Values.services }}
 
-{{- if .gw_http_route.healthCheckPolicy.enabled }}
+{{- if and .gw_http_route .gw_http_route.healthCheckPolicy (default false .gw_http_route.healthCheckPolicy.enabled) }}
 
 apiVersion: networking.gke.io/v1
 kind: HealthCheckPolicy
