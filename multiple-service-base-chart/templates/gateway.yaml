@@ -23,10 +23,10 @@ spec:
       hostname: {{ $gw.host }}
       {{- end }}
 
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: {{ $gw.tls_secret_name | default "sample-tls-secret" }}
+      # tls:
+      #   mode: Terminate
+      #   certificateRefs:
+      #     - kind: Secret
+      #       name: {{ $gw.tls_secret_name | default "sample-tls-secret" }}
 
 {{- end }}
